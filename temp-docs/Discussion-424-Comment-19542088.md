@@ -1,3 +1,5 @@
+***Last updated: 17/11/2026***
+
 Hi @MarianSavchuk , apologies for the long silence on this one. I'd also like to use this thread to continue the discussion started in https://github.com/Open-CMSIS-Pack/Open-CMSIS-Pack-Spec/issues/325 . The topic is closely related.
 
 We have reviewed the above input and share our thoughts below. It picks up a lot of your ideas which are a great starting point.
@@ -89,14 +91,6 @@ Debugger error output should identify the failing function and sequence location
 </sequence>
 ```
 
-## Atomic blocks
-
-- Do not read `__lasterror` or change `__errorcontrol` inside an atomic block. Set the error-handling mode before the block and inspect its result afterward, if execution continues.
-- `<return>` is allowed only as a child of `<sequence>` or `<control>`, never inside a `<block>`. `Query()` and `Sequence()` remain prohibited in atomic blocks.
-- A variable assigned a target-access result must not be used as an r-value later in the same atomic block. This also applies to writable globals.
-
-Assignments to writable globals follow the same rules as assignments to local variables, including when an access fails.
-
 ## Errors, results, and return values
 
 | Mechanism | Purpose |
@@ -109,6 +103,14 @@ Assignments to writable globals follow the same rules as assignments to local va
 - A sequence's return-value format may have no space for an error indicator. It can encode errors only if the format defined by its implementation allows it. `__Result` reports status independently of the returned value.
 - For `Sequence()`, `__lasterror` is nonzero only if the call itself fails, for example due to invalid call arguments. It does not propagate errors from functions inside the called sequence. If needed, the called sequence can set `__Result` to `-1` when its `__lasterror` is nonzero.
 - Returning a value does not implicitly modify `__lasterror` or `__Result`. Assigning `__Result` does not end sequence execution or supply a return value.
+
+## Atomic blocks
+
+- Do not read `__lasterror` or change `__errorcontrol` inside an atomic block. Set the error-handling mode before the block and inspect its result afterward, if execution continues.
+- `<return>` is allowed only as a child of `<sequence>` or `<control>`, never inside a `<block>`. `Query()` and `Sequence()` remain prohibited in atomic blocks.
+- A variable assigned a target-access result must not be used as an r-value later in the same atomic block. This also applies to writable globals.
+
+Assignments to writable globals follow the same rules as assignments to local variables, including when an access fails.
 
 ## Global declarations
 
